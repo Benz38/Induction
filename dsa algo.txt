@@ -1,0 +1,91 @@
+DSA[digital signature algo]
+#include<stdio.h>
+#include<math.h>
+
+int main(void) {
+   //sha512 
+    int l=2048; //keylength
+    int n=256;  //modulo length
+    int q=11;
+    int p=23; //(p-1) mod q=0
+    //choose integer h randomply b/w 2 and p-2
+    int h=5;
+    int temp=pow(h,2);
+    int g= temp%23;  //g will come as 2
+     //choose x randomly bw 0 and q
+    int x=5;
+    int t1=pow(g,x);
+    int y=t1%p;
+    
+    int privatekey[]={p,q,g,x}; //23,11,2,5
+    int publickey[]={p,q,g,y}; //23,11,2,9
+    printf("Private Key");
+    for(int ind=0;ind<4;ind++){
+        printf("%d ",privatekey[ind]);
+    }
+    printf("\n");
+     printf("Public Key");
+    for(int ind=0;ind<4;ind++){
+        printf("%d ",publickey[ind]);
+    }
+    printf("\n");
+    
+    
+    
+    //publish public key and send it to receiver
+    //private key is safe by sender
+    //choose integer k ,randomly betweebn 1 and q-1
+    int k=3;
+    int t2=pow(g,k);
+    int r =(t2%p)%q;
+    //compute i
+    int hm=3;  //hashfunction
+    int i;
+    for(i=0;i<10;i++){
+        if((k*i)%q==1){
+            break;
+        }
+    }
+    
+    int s=(i*(hm+x*r))%q;
+    int signature[]={r,s};
+    
+     printf("SIGNATURE ");
+    for(int ind=0;ind<2;ind++){
+        printf("%d ",signature[ind]);
+    }
+    printf("\n");
+    
+//receiver gets message that is signed 
+    printf("Verifying the message  \n");
+    if(r>0 && r<q && s>0 && s<q){
+        printf("Signature is verifying , values are in limit \n");
+    }
+    
+    int w;
+    for(w=2;w<30;w++){
+        if((w*s)%q==1){
+            break;
+        }
+    }
+     int u1=(hm*w)%q;
+     int u2=(r*w)%q;
+    int  t3=pow(g,u1);
+    int t4=pow(y,u2);
+    int v=((t3*t4)%p);
+    v=v%q;
+    
+    // printf('%d',v);
+    printf("Value of r %d and Value of v %d",r,v);
+    printf("\n");
+    if(v==r){
+        printf("Message is valid");
+        
+    }
+    else{
+        printf("Message is not valid");
+    }
+        
+    
+    
+}
